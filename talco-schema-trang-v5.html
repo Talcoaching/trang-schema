@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trainingsschema Trang · Tal&coaching</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#2D4A3E;--cream:#FDFBF3;--gold:#C97B1A;--teal:#2A7A8C;--muted:#6b7c76;--border:#ddd8cc;--white:#fff;--up:#27ae60;--dn:#e74c3c}
+body{background:var(--cream);font-family:'Nunito',sans-serif;font-size:14px;color:var(--green);min-height:100vh}
+.header{background:var(--green);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--teal))}
+.header img{height:22px;filter:brightness(0) invert(1)}
+.header-name{font-family:'Fraunces',serif;font-size:.9rem;font-weight:700;font-style:italic;color:rgba(255,255,255,.6)}
+.week-nav{background:var(--white);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:7px;overflow-x:auto;scrollbar-width:none;position:sticky;top:51px;z-index:100}
+.week-nav::-webkit-scrollbar{display:none}
+.week-btn{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--cream);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s}
+.week-btn.active{background:var(--green);border-color:var(--green);color:#fff}
+.week-btn.has-data{border-color:var(--teal);color:var(--teal)}
+.week-btn.has-data.active{background:var(--green);border-color:var(--green);color:#fff}
+.container{max-width:720px;margin:0 auto;padding:18px 13px 90px}
+.week-label{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:900;color:var(--green);margin-bottom:14px;padding:0 4px}
+.week-label span{font-style:italic;color:var(--gold)}
+.day-block{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.day-header{background:var(--green);padding:11px 17px;display:flex;align-items:center;justify-content:space-between}
+.day-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:900;color:#fff}
+.day-badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.exercise{border-bottom:1px solid var(--border);padding:11px 16px}
+.exercise:last-of-type{border-bottom:none}
+.ex-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:3px}
+.ex-name{font-weight:700;font-size:13px;color:var(--green);flex:1}
+.ex-tag{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px}
+.tag-compound{background:#edf2f0;color:var(--green)}
+.tag-isolation{background:#fdf6ec;color:var(--gold)}
+.tag-core{background:#eef7f9;color:var(--teal)}
+.tag-upper{background:#f0edf8;color:#6c3483}
+.tag-carry{background:#fef9ec;color:#b7770d}
+.ex-target{font-size:11px;color:var(--muted);margin-bottom:5px}
+.ex-note{font-size:11px;color:var(--teal);font-style:italic;margin-bottom:6px;padding:4px 8px;background:#eef7f9;border-radius:6px;line-height:1.5}
+.ex-progress{font-size:11px;color:var(--gold);font-style:italic;margin-bottom:6px;padding:4px 8px;background:#fdf6ec;border-radius:6px;line-height:1.5}
+.set-header{display:grid;grid-template-columns:22px 1fr 1fr 1fr 46px;gap:4px;margin-bottom:3px}
+.set-row{display:grid;grid-template-columns:22px 1fr 1fr 1fr 46px;gap:4px;margin-bottom:4px;align-items:center}
+.col-hdr{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);text-align:center}
+.set-num{font-size:11px;color:var(--muted);font-weight:700;text-align:center}
+input[type="text"]{width:100%;background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:5px 4px;font-family:'Nunito',sans-serif;font-size:12px;color:var(--green);text-align:center;outline:none}
+input[type="text"]:focus{border-color:var(--teal);background:#fff}
+input::placeholder{color:#ccc;font-size:10px}
+.vol-bar{margin-top:8px;padding:7px 10px;background:var(--cream);border-radius:8px;border:1px solid var(--border)}
+.vol-bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.vol-num{font-size:11px;font-weight:700;color:var(--green)}
+.vol-diff{font-size:11px;font-weight:700}
+.vol-fill-wrap{height:4px;background:var(--border);border-radius:4px;overflow:hidden}
+.vol-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.day-notes{padding:10px 16px;background:#fafaf7;border-top:1px solid var(--border)}
+.day-notes label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+textarea{width:100%;background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-family:'Nunito',sans-serif;font-size:12px;color:var(--green);outline:none;resize:none;height:55px}
+textarea:focus{border-color:var(--teal)}
+.save-wrap{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:11px 18px;display:flex;align-items:center;gap:10px;z-index:100}
+.btn-save{flex:1;background:var(--green);color:#fff;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.btn-save:active{background:#1e3329}
+.save-msg{font-size:12px;color:var(--teal);font-weight:700;display:none}
+</style>
+</head>
+<body>
+<div class="header">
+  <img src="data:image/png;base64,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" alt="tal&coaching">
+  <div class="header-name">Trang · 8 weken</div>
+</div>
+<div class="week-nav" id="weekNav"></div>
+<div class="container" id="mainContent"></div>
+<div class="save-wrap">
+  <button class="btn-save" onclick="saveWeek()">Opslaan 💾</button>
+  <div class="save-msg" id="saveMsg">Opgeslagen ✓</div>
+</div>
+<script>
+const WEEKS = 8;
+let CW = 1;
+
+const SCHEMA = [
+  {
+    day: 'Dag 1', badge: 'Full body',
+    exercises: [
+      {
+        name: 'Deadlift', tag: 'compound', pattern: 'Heupscharnieren',
+        target: '3 sets · 6-8 reps · RIR 3', sets: 3, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Conventionele deadlift. Begin met beperkte range, bouw op naarmate vertrouwen groeit. Voeten heupbreedte, rug neutraal, heupen laag.',
+        progress: 'Week 1-2: oefenen met 40kg, focus op techniek en range. Week 3-4: range uitbreiden, gewicht licht ophogen als techniek stabiel. Week 5-6: volledige range, progressief zwaarder. Week 7+: RIR 2 als vertrouwen er is.'
+      },
+      {
+        name: 'Leg press', tag: 'compound', pattern: 'Kniehinging',
+        target: '3 sets · 8-10 reps · RIR 2-3', sets: 3, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Voeten schouderbreedte. Volledig bewegen, gecontroleerd neerlaten.',
+        progress: 'Week 1-2: 50kg, techniek en gevoel. Week 3-4: opbouwen naar 60kg als het goed voelt. Week 5+: progressief zwaarder.'
+      },
+      {
+        name: 'Hip thrust', tag: 'compound', pattern: 'Heupscharnieren',
+        target: '3 sets · 8 reps · RIR 2-3', sets: 3, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Machine + plate loaded. Bovenin volledig aanspannen. Was zwaar bij 5kg, dus licht blijven.',
+        progress: 'Week 1-2: 5kg, focus op aanspannen bovenin. Week 3-4: gewicht ophogen zodra het comfortabel voelt. Week 5+: progressief opbouwen.'
+      },
+      {
+        name: 'Machine abductie', tag: 'isolation', pattern: 'Isolatie',
+        target: '2 sets · 12 reps · RIR 2-3', sets: 2, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Gecontroleerd bewegen, focus op samentrekken bovenin.'
+      },
+      {
+        name: 'Lat pulldown', tag: 'upper', pattern: 'Trekken',
+        target: '3 sets · 8-10 reps · RIR 2-3', sets: 3, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Trek naar de borst, ellebogen naar beneden en achteren. Schouders omlaag houden.',
+        progress: 'Week 1-2: 35kg, focus op juiste techniek. Week 3-4: reps ophogen of gewicht als techniek goed is. Week 5+: progressief zwaarder.'
+      },
+      {
+        name: 'Farmer walks', tag: 'carry', pattern: 'Carry',
+        target: '2 sets · 40 meter · RIR 3', sets: 2, tracked: true,
+        l1: 'Gewicht', l2: 'Meters',
+        note: 'Rechtop lopen, schouders naar beneden, grip vasthouden. Traint core en stabiliteit.',
+        progress: 'Week 1-2: 16kg, 40 meter. Week 3-4: gewicht ophogen of afstand verlengen. Week 5+: zwaarder of unilateraal.'
+      },
+      {
+        name: 'DB schouder press (alternated)', tag: 'upper', pattern: 'Duwen',
+        target: '3 sets · 12-18 reps · RIR 2-3', sets: 3, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Afwisselend per arm. Kern aanspannen, rechtop zitten.',
+        progress: 'Week 1-2: 4kg, 18 reps. Week 3-4: reps omhoog of gewicht naar 5kg. Week 5+: progressief zwaarder.'
+      },
+      {
+        name: 'Hanging holds', tag: 'core', pattern: 'Core',
+        target: '2-3 sets · max tijd', sets: 3, tracked: true,
+        l1: 'Seconden', l2: '',
+        note: 'Actief hangen, schouders ingetrokken. Bouwt grip en schouderstabiliteit.',
+        progress: 'Week 1-2: 25 + 10 sec. Week 3-4: langere holds, minder pauze. Week 5+: gewicht toevoegen of overgang naar pull ups.'
+      },
+    ]
+  },
+  {
+    day: 'Dag 2', badge: 'Full body · rustig tempo',
+    exercises: [
+      {
+        name: 'Squat', tag: 'compound', pattern: 'Kniehinging',
+        target: '3 sets · 8-10 reps · RIR 3', sets: 3, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Rustig tempo, vertrouwen opbouwen in de beweging. Voeten schouderbreedte, knieën volgen de tenen.',
+        progress: 'Week 1-2: goblet squat met dumbbell, focus op diepte en gevoel. Week 3-4: Smith machine squat, meer stabiliteit, dieper gaan. Week 5-6: barbell squat licht, techniek leidend. Week 7+: progressief zwaarder.'
+      },
+      {
+        name: 'Lying leg curl', tag: 'isolation', pattern: 'Isolatie',
+        target: '3 sets · 10-12 reps · RIR 2-3', sets: 3, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Liggen op de buik, hiel naar bil krullen. Gecontroleerd neerlaten, niet laten vallen.',
+        progress: 'Week 1-2: licht gewicht, voelt de beweging. Week 3-4: 2 sec vasthouden bovenin. Week 5-6: gewicht ophogen. Week 7+: excentrisch 3 sec.'
+      },
+      {
+        name: 'Cable row', tag: 'upper', pattern: 'Trekken',
+        target: '3 sets · 10 reps · RIR 2-3', sets: 3, tracked: true,
+        l1: 'Gewicht', l2: 'Reps',
+        note: 'Zittend, voeten op steun. Trek naar de buik, ellebogen langs het lichaam. Schouderbladen samenknijpen bovenin.',
+        progress: 'Week 1-2: licht gewicht, focus op schouderbladen voelen. Week 3-4: 1 sec vasthouden. Week 5-6: gewicht ophogen. Week 7+: rep range naar 8.'
+      },
+      {
+        name: 'Plank', tag: 'core', pattern: 'Core',
+        target: '3 sets · 20-40 sec · RIR 2', sets: 3, tracked: true,
+        l1: 'Seconden', l2: '',
+        note: 'Rechte lijn van hoofd tot hielen. Buik aanspannen, niet doorhangen. Rustig opbouwen.',
+        progress: 'Week 1-2: 20 sec, focus op goede positie. Week 3-4: naar 30 sec. Week 5-6: naar 40 sec. Week 7+: gewicht toevoegen of varianten.'
+      },
+    ]
+  }
+];
+
+const SUPABASE_URL='https://kccimgucvfjmyiltaryg.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjY2ltZ3VjdmZqbXlpbHRhcnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzcxMDAsImV4cCI6MjA5NDc1MzEwMH0.fBy4Dwr2D96gqNMfIN_6oZnZjdbwukxaoCD0rQHtLdo';
+const CLIENT='trang';
+
+async function sbUpsert(row){
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/training_sessions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify(row)
+    });
+  }catch(e){console.warn('Supabase sync failed',e);}
+}
+
+async function sbLoadWeek(w){
+  try{
+    const r=await fetch(SUPABASE_URL+'/rest/v1/training_sessions?client=eq.'+CLIENT+'&week=eq.'+w,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    const rows=await r.json();
+    rows.forEach(row=>{
+      if(row.weight) localStorage.setItem(fKey(w,row.day,row.exercise,row.set_num,'w'),row.weight);
+      if(row.reps) localStorage.setItem(fKey(w,row.day,row.exercise,row.set_num,'r'),row.reps);
+      if(row.rir) localStorage.setItem(fKey(w,row.day,row.exercise,row.set_num,'rir'),row.rir);
+      if(row.notes) localStorage.setItem(nKey(w,row.day),row.notes);
+    });
+  }catch(e){console.warn('Supabase load failed',e);}
+}
+
+function fKey(w,di,ei,s,t){return 'trang_w'+w+'_d'+di+'_e'+ei+'_s'+s+'_'+t;}
+function nKey(w,di){return 'trang_w'+w+'_d'+di+'_notes';}
+
+function getVol(w,di,ei){
+  let t=0;
+  for(let s=0;s<SCHEMA[di].exercises[ei].sets;s++){
+    const wv=parseFloat(localStorage.getItem(fKey(w,di,ei,s,'w')))||0;
+    const rv=parseFloat(localStorage.getItem(fKey(w,di,ei,s,'r')))||0;
+    t+=wv*rv;
+  }
+  return Math.round(t);
+}
+
+function getPrev(w,di,ei){
+  for(let pw=w-1;pw>=1;pw--){const v=getVol(pw,di,ei);if(v>0) return {vol:v,week:pw};}
+  return null;
+}
+
+function volHTML(di,ei){
+  // Always show volume for all exercises
+  const ex=SCHEMA[di].exercises[ei];
+  const curVol=getVol(CW,di,ei);
+  const prev=getPrev(CW,di,ei);
+  let diffTxt='Eerste meting',diffColor='var(--muted)';
+  if(prev){
+    const d=curVol-prev.vol;
+    if(d>0){diffTxt='↑ +'+d+' kg·reps (w'+prev.week+')';diffColor='var(--up)';}
+    else if(d<0){diffTxt='↓ '+d+' kg·reps (w'+prev.week+')';diffColor='var(--dn)';}
+    else diffTxt='→ Gelijk';
+  }
+  let maxVol=curVol;
+  for(let w=1;w<=WEEKS;w++){const v=getVol(w,di,ei);if(v>maxVol)maxVol=v;}
+  const pct=maxVol>0?Math.round((curVol/maxVol)*100):0;
+  const barColor=curVol===0?'var(--border)':prev===null?'var(--teal)':curVol>=prev.vol?'var(--up)':'var(--dn)';
+  return '<div class="vol-bar"><div class="vol-bar-top"><span class="vol-num">Volume: '+(curVol>0?curVol+' kg·reps':'Nog invullen')+'</span><span class="vol-diff" style="color:'+diffColor+'">'+diffTxt+'</span></div><div class="vol-fill-wrap"><div class="vol-fill" style="width:'+pct+'%;background:'+barColor+';"></div></div></div>';
+}
+
+// Swipe
+let sx=0,sy=0;
+document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){
+    if(dx<0&&CW<WEEKS){CW++;buildNav();renderWeek();}
+    else if(dx>0&&CW>1){CW--;buildNav();renderWeek();}
+  }
+},{passive:true});
+
+function buildNav(){
+  const nav=document.getElementById('weekNav');
+  nav.innerHTML='';
+  for(let w=1;w<=WEEKS;w++){
+    const btn=document.createElement('button');
+    btn.className='week-btn'+(w===CW?' active':'');
+    let hasData=false;
+    SCHEMA.forEach((d,di)=>d.exercises.forEach((ex,ei)=>{
+      for(let s=0;s<ex.sets;s++) if(localStorage.getItem(fKey(w,di,ei,s,'w'))) hasData=true;
+    }));
+    if(hasData&&w!==CW) btn.classList.add('has-data');
+    btn.textContent='Week '+w;
+    btn.onclick=async()=>{CW=w;await sbLoadWeek(w);buildNav();renderWeek();};
+    nav.appendChild(btn);
+  }
+}
+
+function renderWeek(){
+  const c=document.getElementById('mainContent');
+  c.innerHTML='<div class="week-label">Week <span>'+CW+'</span> van 8</div>';
+  SCHEMA.forEach((dayDef,di)=>{
+    const db=document.createElement('div');
+    db.className='day-block';
+    let exHTML='';
+    dayDef.exercises.forEach((ex,ei)=>{
+      const sw=[],sr=[],srir=[];
+      for(let s=0;s<ex.sets;s++){
+        sw.push(localStorage.getItem(fKey(CW,di,ei,s,'w'))||'');
+        sr.push(localStorage.getItem(fKey(CW,di,ei,s,'r'))||'');
+        srir.push(localStorage.getItem(fKey(CW,di,ei,s,'rir'))||'');
+      }
+      const hasL2=ex.l2!=='';
+      const cols=hasL2?'grid-template-columns:22px 1fr 1fr 1fr 46px':'grid-template-columns:22px 1fr 1fr 46px';
+      let sHTML='<div class="set-header" style="display:grid;'+cols+';gap:4px;margin-bottom:3px;"><span></span><span class="col-hdr">Set</span><span class="col-hdr">'+ex.l1+'</span>'+(hasL2?'<span class="col-hdr">'+ex.l2+'</span>':'')+'<span class="col-hdr">RIR</span></div>';
+      for(let s=0;s<ex.sets;s++){
+        sHTML+='<div class="set-row" style="display:grid;'+cols+';gap:4px;margin-bottom:4px;align-items:center;"><div class="set-num">'+(s+1)+'</div><div style="font-size:10px;color:var(--muted);text-align:center;">set '+(s+1)+'</div><input type="text" placeholder="-" value="'+sw[s]+'" data-di="'+di+'" data-ei="'+ei+'" data-s="'+s+'" data-t="w" oninput="liveUpdate(this)" onchange="autoSave(this)">'+(hasL2?'<input type="text" placeholder="-" value="'+sr[s]+'" data-di="'+di+'" data-ei="'+ei+'" data-s="'+s+'" data-t="r" oninput="liveUpdate(this)" onchange="autoSave(this)">':'')+'<input type="text" placeholder="?" value="'+srir[s]+'" data-di="'+di+'" data-ei="'+ei+'" data-s="'+s+'" data-t="rir" onchange="autoSave(this)"></div>';
+      }
+      exHTML+='<div class="exercise"><div class="ex-top"><div class="ex-name">'+ex.name+'</div><div class="ex-tag tag-'+ex.tag+'">'+ex.pattern+'</div></div><div class="ex-target">'+ex.target+'</div>'+(ex.note?'<div class="ex-note">'+ex.note+'</div>':'')+(ex.progress&&CW<=3?'<div class="ex-progress">📈 '+ex.progress+'</div>':'')+sHTML+'<div id="vol-'+di+'-'+ei+'">'+volHTML(di,ei)+'</div></div>';
+    });
+    const savedNotes=localStorage.getItem(nKey(CW,di))||'';
+    db.innerHTML='<div class="day-header"><div class="day-title">'+dayDef.day+'</div><div class="day-badge">'+dayDef.badge+'</div></div>'+exHTML+'<div class="day-notes"><label>Notities</label><textarea placeholder="Hoe voelde het? Wat viel op?" data-di="'+di+'" onchange="saveNote(this)">'+savedNotes+'</textarea></div>';
+    c.appendChild(db);
+  });
+}
+
+function autoSave(inp){
+  const w=CW,di=parseInt(inp.dataset.di),ei=parseInt(inp.dataset.ei),s=parseInt(inp.dataset.s),t=inp.dataset.t;
+  localStorage.setItem(fKey(w,di,ei,s,t),inp.value);
+}
+function saveNote(ta){
+  const di=parseInt(ta.dataset.di);
+  localStorage.setItem(nKey(CW,di),ta.value);
+}
+function liveUpdate(inp){
+  autoSave(inp);
+  const di=parseInt(inp.dataset.di),ei=parseInt(inp.dataset.ei);
+  document.getElementById('vol-'+di+'-'+ei).innerHTML=volHTML(di,ei);
+}
+async function saveWeek(){
+  const msg=document.getElementById('saveMsg');
+  msg.style.display='block';
+  msg.textContent='Opslaan...';
+  document.querySelectorAll('input[data-di]').forEach(i=>autoSave(i));
+  document.querySelectorAll('textarea[data-di]').forEach(t=>saveNote(t));
+  // Sync alles naar Supabase
+  const promises=[];
+  SCHEMA.forEach((dayDef,di)=>{
+    dayDef.exercises.forEach((ex,ei)=>{
+      for(let s=0;s<ex.sets;s++){
+        const w=localStorage.getItem(fKey(CW,di,ei,s,'w'))||'';
+        const r=localStorage.getItem(fKey(CW,di,ei,s,'r'))||'';
+        const rir=localStorage.getItem(fKey(CW,di,ei,s,'rir'))||'';
+        if(w||r||rir){
+          promises.push(sbUpsert({client:CLIENT,week:CW,day:di,exercise:ei,set_num:s,weight:w,reps:r,rir:rir}));
+        }
+      }
+    });
+    const notes=localStorage.getItem(nKey(CW,di))||'';
+    if(notes) promises.push(sbUpsert({client:CLIENT,week:CW,day:di,exercise:-1,set_num:-1,notes:notes}));
+  });
+  await Promise.all(promises);
+  buildNav();
+  msg.textContent='Opgeslagen ✓';
+  setTimeout(()=>msg.style.display='none',2500);
+}
+
+
+const SEED_W1 = {
+  d0: {
+    e0: {w:['40','40','40'], r:['8','','']},
+    e1: {w:['50','60','60'], r:['8','6','6']},
+    e2: {w:['5','5','5'], r:['8','8','8']},
+    e3: {w:['15','15',''], r:['12','12','']},
+    e4: {w:['35','35','35'], r:['10','8','5']},
+    e5: {w:['16','16',''], r:['40','40','']},
+    e6: {w:['4','4','4'], r:['18','18','12']},
+    e7: {w:['','',''], r:['25','10','']}
+  }
+};
+
+function seedWeek1(){
+  const di=0;
+  Object.keys(SEED_W1.d0).forEach(function(ek){
+    const ei=parseInt(ek.replace('e',''));
+    const ed=SEED_W1.d0[ek];
+    ed.w.forEach(function(v,s){ if(v&&!localStorage.getItem(fKey(1,di,ei,s,'w'))) localStorage.setItem(fKey(1,di,ei,s,'w'),v); });
+    ed.r.forEach(function(v,s){ if(v&&!localStorage.getItem(fKey(1,di,ei,s,'r'))) localStorage.setItem(fKey(1,di,ei,s,'r'),v); });
+  });
+}
+
+async function init(){
+  await sbLoadWeek(CW);
+  seedWeek1();
+  buildNav();
+  renderWeek();
+}
+
+init();
+</script>
+</body>
+</html>
